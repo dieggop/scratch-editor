@@ -8,7 +8,15 @@ const baseConfig = new ScratchWebpackConfigBuilder(
         rootPath: path.resolve(__dirname),
         enableReact: false,
         enableTs: true,
-        shouldSplitChunks: false
+        shouldSplitChunks: false,
+        // [Code com Eric] O worker de fetch é criado com
+        // `new Worker(new URL('./FetchWorkerTool.worker', import.meta.url))`,
+        // e a URL do chunk é resolvida contra o publicPath gravado NESTE build.
+        // Com o padrão '/', quem hospeda o editor fora da raiz do site (ex.:
+        // /scratch/<versão>/) pede o worker em /chunks/... e toma 404.
+        // 'auto' resolve a partir da URL do próprio bundle, que é o que
+        // scratch-gui já faz no bundle dele.
+        publicPath: 'auto'
     })
     .setTarget('browserslist')
     .merge({
