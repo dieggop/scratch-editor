@@ -51,6 +51,13 @@ const baseConfig = new ScratchWebpackConfigBuilder(
                 Buffer: require.resolve('buffer/'),
                 stream: require.resolve('stream-browserify')
             },
+            // [Code com Eric] Três substituições que só tiram peso do bundle;
+            // nenhuma altera arquivo do upstream. Ver src/coderic/*.js para o
+            // motivo de cada uma.
+            alias: {
+                'scratch-l10n/locales/editor-msgs': path.resolve(__dirname, 'src/coderic/editor-msgs.js'),
+                '@tensorflow-models/face-detection': path.resolve(__dirname, 'src/coderic/face-detection-stub.js')
+            },
             symlinks: false
         }
     })
@@ -72,6 +79,17 @@ const baseConfig = new ScratchWebpackConfigBuilder(
         resourceQuery: /^$/, // reject any query string
         type: 'asset' // let webpack decide on the best type of asset
     })
+    // [Code com Eric] Os decks (tutoriais) são importados por caminho
+    // relativo de seis arquivos diferentes, então `resolve.alias` não pega:
+    // a substituição é pelo caminho já resolvido do módulo.
+    .addPlugin(new webpack.NormalModuleReplacementPlugin(
+        /[\\/]lib[\\/]libraries[\\/]decks[\\/]index\.jsx$/,
+        path.resolve(__dirname, 'src/coderic/decks.js')
+    ))
+    .addPlugin(new webpack.NormalModuleReplacementPlugin(
+        /[\\/]lib[\\/]libraries[\\/]decks[\\/]translate-image\.js$/,
+        path.resolve(__dirname, 'src/coderic/translate-image.js')
+    ))
     .addPlugin(new webpack.DefinePlugin({
         'process.env.DEBUG': Boolean(process.env.DEBUG),
         'process.env.GA_ID': `"${process.env.GA_ID || 'UA-000000-01'}"`,
