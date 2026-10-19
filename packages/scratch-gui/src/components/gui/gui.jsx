@@ -173,6 +173,7 @@ const GUIComponent = props => {
         onActivateSoundsTab,
         onActivateTab,
         onClickLogo,
+        canAddExtensions,
         onExtensionButtonClick,
         onNewSpriteClick,
         onNewLibraryCostumeClick,
@@ -490,10 +491,17 @@ const GUIComponent = props => {
                                             colorMode={colorMode}
                                         />
                                     </Box>
-                                    <ExtensionsButton
-                                        intl={intl}
-                                        onExtensionButtonClick={onExtensionButtonClick}
-                                    />
+                                    {/* [Code com Eric] Botão "Adicionar extensão" escondido.
+                                        Abre a biblioteca de extensões, que no nosso build
+                                        quebra o editor inteiro (a extensão de detecção de
+                                        rosto está removida), e com ela a criança perde o
+                                        trabalho não salvo. Nenhuma aula usa extensão. */}
+                                    {canAddExtensions ? (
+                                        <ExtensionsButton
+                                            intl={intl}
+                                            onExtensionButtonClick={onExtensionButtonClick}
+                                        />
+                                    ) : null}
                                     <Box className={styles.watermark}>
                                         <Watermark />
                                     </Box>
@@ -629,6 +637,9 @@ GUIComponent.propTypes = {
     onActivateSoundsTab: PropTypes.func,
     onActivateTab: PropTypes.func,
     onClickLogo: PropTypes.func,
+    // [Code com Eric] Mostra o botão "Adicionar extensão". Desligado por
+    // padrão: a biblioteca de extensões quebra o editor neste build.
+    canAddExtensions: PropTypes.bool,
     onExtensionButtonClick: PropTypes.func,
     onLogOut: PropTypes.func,
     onNewSpriteClick: PropTypes.func,
@@ -672,6 +683,8 @@ GUIComponent.propTypes = {
 
 GUIComponent.defaultProps = {
     backpackHost: null,
+    // [Code com Eric] Desligado por padrão: ver o comentário em propTypes.
+    canAddExtensions: false,
     backpackVisible: false,
     basePath: './',
     blocksId: 'original',

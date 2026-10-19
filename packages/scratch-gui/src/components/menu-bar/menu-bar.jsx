@@ -455,8 +455,14 @@ class MenuBar extends React.Component {
                             </MenuBarItemTooltip>
                         ) : [])}
                     </div>
-                    <Divider className={classNames(styles.divider)} />
-                    <div className={styles.fileGroup}>
+                    {/* [Code com Eric] Tutoriais e Depuração escondidos por padrão.
+                        Os tutoriais são material de marca do Scratch (nome, gato e
+                        personagens) e as aulas do Code com Eric são o nosso conteúdo;
+                        a Depuração é ferramenta de quem desenvolve, não de criança. */}
+                    {this.props.showTutorialsAndDebug ? (
+                        <React.Fragment>
+                            <Divider className={classNames(styles.divider)} />
+                            <div className={styles.fileGroup}>
                         <button
                             aria-label={this.props.intl.formatMessage(ariaMessages.tutorials)}
                             className={
@@ -485,7 +491,9 @@ class MenuBar extends React.Component {
                                 <FormattedMessage {...ariaMessages.debug} />
                             </span>
                         </button>
-                    </div>
+                            </div>
+                        </React.Fragment>
+                    ) : null}
                 </div>
 
                 {/* show the proper UI in the account menu, given whether the user is
@@ -695,6 +703,9 @@ MenuBar.propTypes = {
     onLogOut: PropTypes.func,
     onOpenRegistration: PropTypes.func,
     onOpenTipLibrary: PropTypes.func,
+    // [Code com Eric] Mostra os botões Tutoriais e Depuração. Desligado por
+    // padrão: ver o comentário onde eles são renderizados.
+    showTutorialsAndDebug: PropTypes.bool,
     onOpenDebugModal: PropTypes.func,
     onProjectTelemetryEvent: PropTypes.func,
     onRequestCloseLogin: PropTypes.func,
@@ -719,7 +730,9 @@ MenuBar.propTypes = {
 
 MenuBar.defaultProps = {
     logo: scratchLogo,
-    onShare: () => {}
+    onShare: () => {},
+    // [Code com Eric] Desligado por padrão: ver o comentário em propTypes.
+    showTutorialsAndDebug: false
 };
 
 const mapStateToProps = (state, ownProps) => {
